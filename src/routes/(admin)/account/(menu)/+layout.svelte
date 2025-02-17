@@ -24,10 +24,12 @@
   }
 </script>
 
-<div class="drawer lg:drawer-open">
+<div
+  class="drawer lg:drawer-open bg-gradient-to-br from-pink-200 via-blue-200 to-purple-20 h-screen"
+>
   <input id="admin-drawer" type="checkbox" class="drawer-toggle" />
   <div class="drawer-content">
-    <div class="navbar bg-base-100 lg:hidden">
+    <div class="navbar bg-white lg:hidden">
       <div class="flex-1">
         <a class="btn btn-ghost normal-case text-xl" href="/">{WebsiteName}</a>
       </div>
@@ -59,7 +61,7 @@
   <div class="drawer-side">
     <label for="admin-drawer" class="drawer-overlay"></label>
     <ul
-      class="menu menu-lg p-4 w-80 min-h-full bg-base-100 lg:border-r text-primary"
+      class="menu menu-lg p-4 w-80 min-h-full bg-white lg:border-r text-primary"
     >
       <li>
         <div
