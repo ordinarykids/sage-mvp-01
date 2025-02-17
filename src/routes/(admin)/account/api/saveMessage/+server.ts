@@ -57,7 +57,7 @@ export async function POST({ request }) {
   try {
     // Parse the JSON body from the request
     const body = await request.json()
-    console.log(body)
+    //console.log(body)
     // Validate that a messages payload was provided
     if (!body || !body.messages) {
       return json({ error: "No messages provided." }, { status: 400 })

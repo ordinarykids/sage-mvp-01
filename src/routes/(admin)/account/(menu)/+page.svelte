@@ -36,14 +36,29 @@
 
   let partialMessage = $state("")
   let finalMessage = $state("")
+  let displayedPartial = $state("")
 
   // let adminSection: Writable<string> = getContext("adminSection")
   adminSection.set("home")
 
   let vapi: Vapi
 
+  function typewriterEffect(text: string) {
+    let index = 0
+    const intervalId = setInterval(() => {
+      if (index < text.length) {
+        displayedPartial = text.substring(0, index + 1)
+        index++
+      } else {
+        clearInterval(intervalId)
+      }
+    }, 20) // Adjust typing speed here (milliseconds)
+
+    return intervalId
+  }
+
   $effect(() => {
-    console.log(data.conversations)
+    //console.log(data.conversations)
     //console.log("_______" + profile?.full_name)
 
     let combinedTranscripts = data.conversations
@@ -106,24 +121,21 @@
       //console.log(result)
     }
 
+    let intervalId: number // To store the interval ID for cleanup
+
     vapi.on("message", (message) => {
       saveMessageToSupabase(message)
       if (
         message.type === "transcript" &&
         message.transcriptType === "partial"
       ) {
-        //  saveMessageToSupabase(message)
         partialMessage += message.transcript
       }
-      console.log(message)
-      if (
-        message.type === "transcript" &&
-        message.transcriptType === "final" &&
-        message.role === "assistant"
-      ) {
+      //console.log(message)
+      if (message.type === "transcript" && message.transcriptType === "final") {
         partialMessage = ""
-        finalMessage += message.transcript + "\n"
-        //saveMessage(message)
+        displayedPartial = ""
+        finalMessage += `${message.transcript}\n`
       }
     })
 
@@ -137,6 +149,20 @@
     //     saveMessageToSupabase()
     //   }
     // })
+
+    $effect(() => {
+      if (intervalId) {
+        clearInterval(intervalId)
+      }
+      intervalId = typewriterEffect(partialMessage)
+    })
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId)
+      }
+      stopVapi()
+    }
 
     function stop() {
       vapi.stop()
@@ -172,13 +198,23 @@
         id="chat-container"
       >
         <div
-          class="text-center max-w-md m-auto text-2xl md:text-4xl leading-relaxed px-8"
+          class="text-center max-w-lg m-auto text-6xl md:text-2xl leading-relaxed px-8"
         >
-          <!-- <div
-            class="bg-gradient-to-b from-purple-400 via-pink-500 to-red-500 text-transparent bg-clip-text px-8 md:text-lg text-2xl"
-          > -->
-          {finalMessage + partialMessage}
-          <!-- </div> -->
+          {#each (finalMessage + displayedPartial).split("\n") as message, i}
+            {#if i === data.conversations.length && message === partialMessage}
+              <div class="text-white rounded-lg p-4 mb-2 text-6xl">
+                {message}
+              </div>
+            {:else if data.conversations[i]?.role === "assistant"}
+              <div class="text-white p-4 mb-2 text-6xl">
+                {message}
+              </div>
+            {:else}
+              <div class="text-black rounded-lg p-4 mb-2">
+                {message}
+              </div>
+            {/if}
+          {/each}
         </div>
       </div>
     </div>

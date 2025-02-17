@@ -110,7 +110,7 @@ Please format your response as JSON with the following structure:
   })
 
   const result = await response.json()
-  console.log(result)
+
   return result
 }
 

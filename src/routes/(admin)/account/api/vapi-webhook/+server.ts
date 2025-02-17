@@ -5,7 +5,7 @@ import { createClient } from "@supabase/supabase-js"
  * This endpoint listens for POST requests, e.g. from a Vapi webhook.
  */
 export async function GET({ request }) {
-  console.log(request)
+  //  console.log(request)
   try {
     // Parse the JSON payload from the webhook
     const payload = await request.json()
